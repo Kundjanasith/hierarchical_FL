@@ -22,7 +22,12 @@ for e in range(NUM_ROUNDS):
     arr.append(copy.deepcopy(model.get_weights()))
     for p in glob.glob('local_models/*_ep%d.h5'%e):
         model = utils.model_init()
-        model.load_weights(p)
+        while not os.path.exists(p):
+            try:
+                model.load_weights(p)
+            except:
+                pass
+        # model.load_weights(p)
         arr.append(copy.deepcopy(model.get_weights()))
     arr_avg = utils.aggregated(arr)
     aggregated_model = utils.model_init()
