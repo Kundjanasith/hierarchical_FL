@@ -22,7 +22,7 @@ for e in range(NUM_ROUNDS):
         model.load_weights(p)
         arr.append(copy.deepcopy(model.get_weights()))
     arr_avg = utils.aggregated(arr)
-    aggregated_model = utils.init_model()
+    aggregated_model = utils.model_init()
     aggregated_model.set_weights(arr_avg)
     aggregated_model.save_weights('global_models/aggregated_model_ep%d.h5'%(e+1))
     utils.broadcast_model(local_ip,19191,'global_models/aggregated_model_ep%d.h5'%(e+1))
