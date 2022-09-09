@@ -7,7 +7,6 @@ model = utils.model_init()
 (X_train, Y_train), (X_test, Y_test) = utils.load_dataset()
 
 NUM_ROUNDS = 10
-NUM_DEVICES = 2
 file_out = open('log.txt','w')
 file_out.write('ep,')
 for ip in local_ip:
