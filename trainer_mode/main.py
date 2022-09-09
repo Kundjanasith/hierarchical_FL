@@ -8,7 +8,7 @@ ip = sys.argv[1]
 NUM_ROUNDS = 10
 
 for e in range(NUM_ROUNDS):
-    utils.receive_model(ip,19191,'global_models/')
+    utils.receive_model('127.0.0.1',19191,'global_models/')
     model = utils.model_init()
     model.load_weights('global_models/aggregated_model_ep%d.h5'%e)
     x_train, y_train = utils.sampling_data()
