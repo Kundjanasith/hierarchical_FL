@@ -10,7 +10,12 @@ NUM_ROUNDS = 10
 for e in range(NUM_ROUNDS):
     utils.receive_model('0.0.0.0',19191,'global_models/')
     model = utils.model_init()
-    model.load_weights('global_models/aggregated_model_ep%d.h5'%e)
+    # model.load_weights('global_models/aggregated_model_ep%d.h5'%e)
+    while not os.path.exists('global_models/aggregated_model_ep%d.h5'%e):
+        try:
+            model.load_weights('global_models/aggregated_model_ep%d.h5'%e)
+        except:
+            pass
     x_train, y_train = utils.sampling_data()
     model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
     model.fit(x_train, y_train,epochs=5,batch_size=16,verbose=1,validation_split=0.2)
