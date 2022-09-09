@@ -2,7 +2,7 @@ import sys, os, time, glob, copy
 sys.path.insert(1, '..')       
 import utils
 
-local_ip = ['10.10.100.34', '10.10.100.35']
+local_ip = ['10.10.100.34', '10.10.100.35', '10.10.100.36', '10.10.100.37', '10.10.100.38', '10.10.100.39', '10.10.100.40', '10.10.100.41', '10.10.100.42']
 model = utils.model_init()
 (X_train, Y_train), (X_test, Y_test) = utils.load_dataset()
 
