@@ -8,7 +8,7 @@ global_ip = '10.10.100.33'
 init_model = utils.model_init()
 init_model.save_weights('global_models/aggregated_model_ep0.h5')
 while not os.path.exists('global_models/aggregated_model_ep0.h5'):
-    time.sleep(1)
+    time.sleep(10)
 utils.broadcast_model(local_ip,19191,'global_models/aggregated_model_ep0.h5')
 
 NUM_ROUNDS = 10
