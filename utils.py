@@ -83,6 +83,7 @@ def receive_model(tcp_ip, tcp_port, file_path):
         newthread = ClientThread(tcp_ip,tcp_port,conn,file_path+'/'+filename,BUFFER_SIZE)
         newthread.start()
         threads.append(newthread)
+        time.sleep(10)
         if os.path.exists(file_path+'/'+filename):
             break
     for t in threads:

@@ -13,8 +13,10 @@ for e in range(NUM_ROUNDS):
     # model.load_weights('global_models/aggregated_model_ep%d.h5'%e)
     while not os.path.exists('global_models/aggregated_model_ep%d.h5'%e):
         try:
+            print('a')
             model.load_weights('global_models/aggregated_model_ep%d.h5'%e)
         except:
+            print('b')
             pass
     x_train, y_train = utils.sampling_data()
     model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
