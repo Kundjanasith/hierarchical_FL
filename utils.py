@@ -36,7 +36,7 @@ def send_model(tcp_ip, tcp_port, file_path):
     SEPARATOR = "<SEPARATOR>"
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
-    s.send(f"{file_path.split('/')[1]}{SEPARATOR}".encode())
+    s.send(byte(f"{file_path.split('/')[1]}{SEPARATOR}",'UTF-8'))
     with open(file_path, 'rb') as f:
         while True:
             bytes_read = f.read(BUFFER_SIZE)
@@ -65,7 +65,7 @@ def receive_model(tcp_ip, tcp_port, file_path):
         print("Waiting for incoming connections...")
         (conn, (ip,port)) = tcpsock.accept()
         received = conn.recv(BUFFER_SIZE).decode()
-        filename, _ = received.split(SEPARATOR)
+        filename, _ = received.split(bytes(SEPARATOR,'UTF-8'))
         print('Got connection from ', (ip,port))
         newthread = ClientThread(tcp_ip,tcp_port,conn,file_path+'/'+filename,BUFFER_SIZE)
         newthread.start()
