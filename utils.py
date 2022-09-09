@@ -65,6 +65,7 @@ def receive_model(tcp_ip, tcp_port, file_path):
         print("Waiting for incoming connections...")
         (conn, (ip,port)) = tcpsock.accept()
         # received = conn.recv(BUFFER_SIZE).decode()
+        received = conn.recv(BUFFER_SIZE)
         filename, _ = received.split(bytes(SEPARATOR,'UTF-8'))
         print('Got connection from ', (ip,port))
         newthread = ClientThread(tcp_ip,tcp_port,conn,file_path+'/'+filename,BUFFER_SIZE)
