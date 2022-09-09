@@ -30,7 +30,7 @@ class ClientThread(Thread):
                 f.write(bytes_read)
         time.sleep(1)
 
-def send_model(tcp_ip, tcp_port, file_path):
+async def send_model(tcp_ip, tcp_port, file_path):
     TCP_IP = tcp_ip
     TCP_PORT = tcp_port
     BUFFER_SIZE = 1024
