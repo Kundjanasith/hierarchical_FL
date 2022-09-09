@@ -17,6 +17,9 @@ for e in range(NUM_ROUNDS):
     for n in range(NUM_DEVICES):
         utils.receive_model('0.0.0.0',19192,'local_models/')
     arr = []
+    model = utils.model_init()
+    model.load_weights('global_models/aggregated_model_ep%d.h5'%(e))
+    arr.append(copy.deepcopy(model.get_weights()))
     for p in glob.glob('local_models/*_ep%d.h5'%e):
         model = utils.model_init()
         model.load_weights(p)
