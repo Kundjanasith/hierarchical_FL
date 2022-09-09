@@ -36,7 +36,7 @@ def send_model(tcp_ip, tcp_port, file_path):
     SEPARATOR = "<SEPARATOR>"
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
-    s.send(byte(f"{file_path.split('/')[1]}{SEPARATOR}",'UTF-8'))
+    s.send(bytes(f"{file_path.split('/')[1]}{SEPARATOR}",'UTF-8'))
     with open(file_path, 'rb') as f:
         while True:
             bytes_read = f.read(BUFFER_SIZE)
