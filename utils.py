@@ -1,6 +1,6 @@
 from tensorflow.keras.applications.mobilenet import MobileNet
 from tensorflow.keras.layers import Input, Dense, BatchNormalization, Flatten
-from keras import Model
+from tensorflow.keras import Model
 from tensorflow.keras.datasets import cifar10
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import SGD
