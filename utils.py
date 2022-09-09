@@ -53,11 +53,12 @@ def send_model(tcp_ip, tcp_port, file_path):
 def broadcast_model(tcp_ip_list, tcp_port, file_path):
     for ip in tcp_ip_list:
         os.system('cp %s %s'%(file_path,file_path+ip))
+        time.sleep(100)
         print('start transfer %s to %s'%(file_path,ip))
         res = send_model(ip, tcp_port, file_path+ip)
         print(res)
+        os.system('rm -rf %s'%(file_path+ip))
         time.sleep(100)
-        # os.system('rm -rf %s'%(file_path+ip))
         print('end transfer %s to %s'%(file_path,ip))
     return 'complete'
 
