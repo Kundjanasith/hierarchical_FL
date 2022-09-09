@@ -18,9 +18,11 @@ for e in range(NUM_ROUNDS):
     file_out.write('%d,'%e)
     for ip in local_ip:
         model.load_weights('local_models/%s_ep%d.h5'%(ip,e))
+        model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
         _, acc = model.evaluate(X_test, Y_test)
         file_out.write('%f,'%acc)
     model.load_weights('global_models/aggregated_model_ep%d.h5'%(e))
+    model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
     _, acc = model.evaluate(X_test, Y_test)
     file_out.write('%f\n'%acc)
     
