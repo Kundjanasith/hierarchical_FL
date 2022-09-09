@@ -28,6 +28,7 @@ class ClientThread(Thread):
                 if not bytes_read:    
                     break
                 f.write(bytes_read)
+            f.close()
 
 def send_model(tcp_ip, tcp_port, file_path):
     TCP_IP = tcp_ip
@@ -43,6 +44,7 @@ def send_model(tcp_ip, tcp_port, file_path):
             if not bytes_read:
                 break
             s.sendall(bytes_read)
+        f.close()
     s.close()
     return 'complete'
 
