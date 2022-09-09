@@ -46,6 +46,11 @@ def send_model(tcp_ip, tcp_port, file_path):
     s.close()
     return 'complete'
 
+def broadcast_model(tcp_ip_list, tcp_port, file_path):
+    for ip in tcp_ip_list:
+        send_model(ip, tcp_port, file_path)
+    return 'complete'
+
 def receive_model(tcp_ip, tcp_port, file_path):
     TCP_IP = tcp_ip
     TCP_PORT = tcp_port
@@ -105,3 +110,11 @@ def model_init():
     x = Dense(10,activation='softmax')(x)
     model = Model(model.input,x)
     return model
+
+def aggregated(server_weight):
+    avg_weight = np.array(server_weight[0])
+    if len(server_weight) > 1:
+        for i in range(1, len(server_weight)):
+            avg_weight += server_weight[i]
+    avg_weight = avg_weight / len(server_weight)
+    return avg_weight
