@@ -30,7 +30,7 @@ class ClientThread(Thread):
                 f.write(bytes_read)
         time.sleep(1)
 
-async def send_model(tcp_ip, tcp_port, file_path):
+def send_model(tcp_ip, tcp_port, file_path):
     TCP_IP = tcp_ip
     TCP_PORT = tcp_port
     BUFFER_SIZE = 1024
@@ -51,7 +51,8 @@ async def send_model(tcp_ip, tcp_port, file_path):
 def broadcast_model(tcp_ip_list, tcp_port, file_path):
     for ip in tcp_ip_list:
         print('start transfer %s to %s'%(file_path,ip))
-        send_model(ip, tcp_port, file_path)
+        res = send_model(ip, tcp_port, file_path)
+        print(res)
         time.sleep(5)
         print('end transfer %s to %s'%(file_path,ip))
     return 'complete'
