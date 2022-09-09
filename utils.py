@@ -50,8 +50,10 @@ def send_model(tcp_ip, tcp_port, file_path):
 
 def broadcast_model(tcp_ip_list, tcp_port, file_path):
     for ip in tcp_ip_list:
+        print('start transfer %s to %s'%(file_path,ip))
         send_model(ip, tcp_port, file_path)
         time.sleep(5)
+        print('end transfer %s to %s'%(file_path,ip))
     return 'complete'
 
 def receive_model(tcp_ip, tcp_port, file_path):
