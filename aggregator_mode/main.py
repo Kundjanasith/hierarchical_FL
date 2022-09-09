@@ -15,7 +15,7 @@ NUM_ROUNDS = 10
 NUM_DEVICES = 2
 for e in range(NUM_ROUNDS):
     for n in range(NUM_DEVICES):
-        utils.receive_model('127.0.0.1',19192,'local_models/')
+        utils.receive_model('0.0.0.0',19192,'local_models/')
     arr = []
     for p in glob.glob('local_models/*_ep%d.h5'%e):
         model = utils.model_init()
