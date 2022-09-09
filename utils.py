@@ -51,6 +51,7 @@ def send_model(tcp_ip, tcp_port, file_path):
 def broadcast_model(tcp_ip_list, tcp_port, file_path):
     for ip in tcp_ip_list:
         send_model(ip, tcp_port, file_path)
+        time.sleep(5)
     return 'complete'
 
 def receive_model(tcp_ip, tcp_port, file_path):
