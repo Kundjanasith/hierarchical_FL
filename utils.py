@@ -38,7 +38,7 @@ def send_model(tcp_ip, tcp_port, file_path):
     SEPARATOR = "<SEPARATOR>"
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
-    s.send(bytes(f"{file_path.split('/')[1]}{SEPARATOR}",'UTF-8'))
+    s.send(bytes(f"{file_path.split('/')[1].split('10.10')[0]}{SEPARATOR}",'UTF-8'))
     with open(file_path, 'rb') as f:
         while True:
             bytes_read = f.read(BUFFER_SIZE)
@@ -52,10 +52,12 @@ def send_model(tcp_ip, tcp_port, file_path):
 
 def broadcast_model(tcp_ip_list, tcp_port, file_path):
     for ip in tcp_ip_list:
+        os.system('cp %s %s'%(file_path,file_path+ip))
         print('start transfer %s to %s'%(file_path,ip))
-        res = send_model(ip, tcp_port, file_path)
+        res = send_model(ip, tcp_port, file_path+ip)
         print(res)
         time.sleep(5)
+        os.system('rm -rf %s'%(file_path+ip))
         print('end transfer %s to %s'%(file_path,ip))
     return 'complete'
 
