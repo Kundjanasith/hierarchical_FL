@@ -44,7 +44,10 @@ def send_model(tcp_ip, tcp_port, file_path):
             bytes_read = f.read(BUFFER_SIZE)
             if not bytes_read:
                 break
-            s.sendall(bytes_read)
+            try:
+                s.sendall(bytes_read)
+            except Exception as e:
+                print(e)
         f.close()
     time.sleep(1)
     s.close()
