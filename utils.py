@@ -47,7 +47,7 @@ def send_model(tcp_ip, tcp_port, file_path):
             try:
                 s.sendall(bytes_read)
             except Exception as e:
-                print(e
+                print(e)
         f.close()
     time.sleep(1)
     s.close()
