@@ -16,7 +16,7 @@ for e in range(NUM_ROUNDS):
     # for n in range(len(local_ip)):
     #     utils.receive_model('0.0.0.0',19192,'local_models/')
     while True:
-        if len(glob.glob('local_models/*_ep%d.h5'%e)) == len(local_ip)
+        if len(glob.glob('local_models/*_ep%d.h5'%e)) == len(local_ip):
             break
     arr = []
     model = utils.model_init()
