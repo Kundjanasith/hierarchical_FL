@@ -107,7 +107,7 @@ def load_dataset():
 def sampling_data():
     (x_train, y_train), (x_test, y_test) = load_dataset()
     print(len(x_train))
-    num_of_each_dataset = 1000
+    num_of_each_dataset = 5000
     print(num_of_each_dataset)
     split_data_index = []
     while len(split_data_index) < num_of_each_dataset:
