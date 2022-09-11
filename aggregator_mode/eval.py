@@ -6,7 +6,7 @@ local_ip = ['10.10.100.34', '10.10.100.35', '10.10.100.36', '10.10.100.37', '10.
 model = utils.model_init()
 (X_train, Y_train), (X_test, Y_test) = utils.load_dataset()
 
-NUM_ROUNDS = 10
+NUM_ROUNDS = 10000
 file_out = open('log.txt','w')
 file_out.write('ep,')
 for ip in local_ip:

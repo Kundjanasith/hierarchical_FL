@@ -5,7 +5,7 @@ import utils
 global_ip = '10.10.100.33'
 
 ip = sys.argv[1]
-NUM_ROUNDS = 10
+NUM_ROUNDS = 10000
 
 for e in range(NUM_ROUNDS):
     utils.receive_model('0.0.0.0',19191,'global_models/')
