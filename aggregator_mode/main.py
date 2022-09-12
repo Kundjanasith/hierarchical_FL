@@ -8,16 +8,14 @@ config.read('../config.ini')
 group_id = sys.argv[1]
 
 aggregator_ip = config[group_id]['AGGREGATOR_IP']
+exchanger_ip = config[group_id]['EXCHANGER_IP']
 trainer_ip = ast.literal_eval(config[group_id]['TRAINER_IP'])
 num_communication_rounds = int(config['TRAINING']['NUM_COMMUNICATION_ROUNDS'])
 hostname = socket.gethostname()
 
-init_model = utils.model_init()
-init_model.save_weights('aggregated_models/%s_ep%d.h5'%(hostname,0))
-while not os.path.exists('aggregated_models/%s_ep%d.h5'%(hostname,0)):
-    time.sleep(10)
-
-utils.broadcast_model(trainer_ip,19192,'aggregated_models/%s_ep%d.h5'%(hostname,0), 'exchanged_models')
+while not os.path.exists('exchanged_models/model_ep%d.h5'%(0)):
+    time.sleep(5)
+utils.broadcast_model(trainer_ip,19192,'exchanged_models/model_ep%d.h5'%(0), 'exchanged_models')
 
 for e in range(num_communication_rounds):
     while True:
@@ -25,7 +23,7 @@ for e in range(num_communication_rounds):
             break
     arr = []
     model = utils.model_init()
-    model.load_weights('aggregated_models/%s_ep%d.h5'%(hostname,e))
+    model.load_weights('exchanged_models/model_ep%d.h5'%(e))
     arr.append(copy.deepcopy(model.get_weights()))
     for p in glob.glob('trained_models/*_ep%d.h5'%(e)):
         model = utils.model_init()
@@ -39,9 +37,10 @@ for e in range(num_communication_rounds):
     aggregated_model = utils.model_init()
     aggregated_model.set_weights(arr_avg)
     aggregated_model.save_weights('aggregated_models/%s_ep%d.h5'%(hostname,e+1))
-    utils.broadcast_model(trainer_ip,19192,'aggregated_models/%s_ep%d.h5'%(hostname,e+1), 'exchanged_models')
+    while not os.path.exists('aggregated_models/%s_ep%d.h5'%(hostname,e+1)):
+            time.sleep(5)
+    utils.send_model(exchanger_ip,19190,'aggregated_models/%s_ep%d.h5'%(hostname,e+1), 'aggregated_models')
 
-
-    # utils.send_model(national_ip,19190,'global_models/aggregated_model_ep%d.h5'%(e+1))
-    # while not os.path.exists('aggregated_models/%s_ep%d.h5'%(ip,ep_counter)):
-    #         time.sleep(5)
+    while not os.path.exists('exchanged_models/model_ep%d.h5'%(e+1)):
+            time.sleep(5)
+    utils.broadcast_model(trainer_ip,19192,'exchanged_models/model_ep%d.h5'%(e+1), 'exchanged_models')

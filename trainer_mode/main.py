@@ -17,9 +17,9 @@ hostname = socket.gethostname()
 for e in range(num_communication_rounds):
     utils.receive_model('0.0.0.0',19192)
     model = utils.model_init()
-    while not os.path.exists('exchanged_models/%s_ep%d.h5'%(hostname,e)):
+    while not os.path.exists('exchanged_models/model_ep%d.h5'%(e)):
         try:
-            model.load_weights('exchanged_models/%s_ep%d.h5'%(hostname,e))
+            model.load_weights('exchanged_models/model_ep%d.h5'%(e))
         except:
             pass
     x_train, y_train = utils.sampling_data(num_samples)
