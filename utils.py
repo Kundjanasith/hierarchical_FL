@@ -31,14 +31,15 @@ class ClientThread(Thread):
             f.close()
         time.sleep(1)
 
-def send_model(tcp_ip, tcp_port, file_path):
+def send_model(tcp_ip, tcp_port, file_path, to_path):
     TCP_IP = tcp_ip
     TCP_PORT = tcp_port
     BUFFER_SIZE = 1024
     SEPARATOR = "<SEPARATOR>"
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print('XXXX',TCP_IP, TCP_PORT)
     s.connect((TCP_IP, TCP_PORT))
-    s.send(bytes(f"{file_path.split('/')[1]}{SEPARATOR}",'UTF-8'))
+    s.send(bytes(f"{file_path.split('/')[1]}{SEPARATOR}{to_path}",'UTF-8'))
     with open(file_path, 'rb') as f:
         while True:
             bytes_read = f.read(BUFFER_SIZE)
@@ -53,19 +54,19 @@ def send_model(tcp_ip, tcp_port, file_path):
     s.close()
     return 'complete'
 
-def broadcast_model(tcp_ip_list, tcp_port, file_path):
+def broadcast_model(tcp_ip_list, tcp_port, file_path, to_path):
     for ip in tcp_ip_list:
         # os.system('cp %s %s'%(file_path,file_path+ip))
         time.sleep(10)
         print('start transfer %s to %s'%(file_path,ip))
-        res = send_model(ip, tcp_port, file_path)
+        res = send_model(ip, tcp_port, file_path, to_path)
         # print(res)
         # os.system('rm -rf %s'%(file_path+ip))
         time.sleep(10)
         print('end transfer %s to %s'%(file_path,ip))
     return 'complete'
 
-def receive_model(tcp_ip, tcp_port, file_path):
+def receive_model(tcp_ip, tcp_port):
     TCP_IP = tcp_ip
     TCP_PORT = tcp_port
     BUFFER_SIZE = 1024
@@ -80,9 +81,10 @@ def receive_model(tcp_ip, tcp_port, file_path):
         (conn, (ip,port)) = tcpsock.accept()
         # received = conn.recv(BUFFER_SIZE).decode()
         received = conn.recv(BUFFER_SIZE)
-        filename, _ = received.split(bytes(SEPARATOR,'UTF-8'))
+        filename, file_path = received.split(bytes(SEPARATOR,'UTF-8'))
         filename = filename.decode('UTF-8')
-        print('Got connection from ', (ip,port))
+        file_path = file_path.decode('UTF-8')
+        print('Got connection from ', (ip,port,file_path,filename))
         newthread = ClientThread(tcp_ip,tcp_port,conn,file_path+'/'+filename,BUFFER_SIZE)
         newthread.start()
         threads.append(newthread)
@@ -104,10 +106,10 @@ def load_dataset():
     Y_test = to_categorical(Y_test)
     return (X_train, Y_train), (X_test, Y_test)
 
-def sampling_data():
+def sampling_data(num_samples):
     (x_train, y_train), (x_test, y_test) = load_dataset()
     print(len(x_train))
-    num_of_each_dataset = 5000
+    num_of_each_dataset = num_samples
     print(num_of_each_dataset)
     split_data_index = []
     while len(split_data_index) < num_of_each_dataset:

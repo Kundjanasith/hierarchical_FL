@@ -1,40 +1,47 @@
-import sys, os, time, glob, copy
+import sys, os, time, glob, copy, configparser, socket, ast
 sys.path.insert(1, '..')       
 import utils
 
-local_ip = ['10.10.100.34', '10.10.100.35', '10.10.100.36', '10.10.100.37', '10.10.100.38', '10.10.100.39', '10.10.100.40', '10.10.100.41', '10.10.100.42']
-global_ip = '10.10.100.33'
+config = configparser.ConfigParser()
+config.read('../config.ini')
+
+group_id = sys.argv[1]
+
+aggregator_ip = config[group_id]['AGGREGATOR_IP']
+trainer_ip = ast.literal_eval(config[group_id]['TRAINER_IP'])
+num_communication_rounds = int(config['TRAINING']['NUM_COMMUNICATION_ROUNDS'])
+hostname = socket.gethostname()
 
 init_model = utils.model_init()
-init_model.save_weights('global_models/aggregated_model_ep0.h5')
-while not os.path.exists('global_models/aggregated_model_ep0.h5'):
+init_model.save_weights('aggregated_models/%s_ep%d.h5'%(hostname,0))
+while not os.path.exists('aggregated_models/%s_ep%d.h5'%(hostname,0)):
     time.sleep(10)
-utils.broadcast_model(local_ip,19191,'global_models/aggregated_model_ep0.h5')
 
-NUM_ROUNDS = 10000
-for e in range(NUM_ROUNDS):
-    # for n in range(len(local_ip)):
-    #     utils.receive_model('0.0.0.0',19192,'local_models/')
+utils.broadcast_model(trainer_ip,19192,'aggregated_models/%s_ep%d.h5'%(hostname,0), 'exchanged_models')
+
+for e in range(num_communication_rounds):
     while True:
-        if len(glob.glob('local_models/*_ep%d.h5'%e)) == len(local_ip):
+        if len(glob.glob('trained_models/*_ep%d.h5'%(e))) == len(trainer_ip):
             break
     arr = []
     model = utils.model_init()
-    model.load_weights('global_models/aggregated_model_ep%d.h5'%(e))
+    model.load_weights('aggregated_models/%s_ep%d.h5'%(hostname,e))
     arr.append(copy.deepcopy(model.get_weights()))
-    for p in glob.glob('local_models/*_ep%d.h5'%e):
+    for p in glob.glob('trained_models/*_ep%d.h5'%(e)):
         model = utils.model_init()
         while not os.path.exists(p):
             try:
                 model.load_weights(p)
             except:
                 pass
-        # model.load_weights(p)
         arr.append(copy.deepcopy(model.get_weights()))
     arr_avg = utils.aggregated(arr)
     aggregated_model = utils.model_init()
     aggregated_model.set_weights(arr_avg)
-    aggregated_model.save_weights('global_models/aggregated_model_ep%d.h5'%(e+1))
-    utils.broadcast_model(local_ip,19191,'global_models/aggregated_model_ep%d.h5'%(e+1))
+    aggregated_model.save_weights('aggregated_models/%s_ep%d.h5'%(hostname,e+1))
+    utils.broadcast_model(trainer_ip,19192,'aggregated_models/%s_ep%d.h5'%(hostname,e+1), 'exchanged_models')
 
-    
+
+    # utils.send_model(national_ip,19190,'global_models/aggregated_model_ep%d.h5'%(e+1))
+    # while not os.path.exists('aggregated_models/%s_ep%d.h5'%(ip,ep_counter)):
+    #         time.sleep(5)
