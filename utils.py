@@ -1,3 +1,4 @@
+from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.applications.mobilenet import MobileNet
 from tensorflow.keras.layers import Input, Dense, BatchNormalization, Flatten
 from tensorflow.keras import Model
@@ -9,7 +10,8 @@ import numpy as np
 import socket, os, time
 from threading import Thread
 from socketserver import ThreadingMixIn
-import asyncio
+import asyncio, logging
+logging.getLogger('tensorflow').disabled = True
 
 
 class ClientThread(Thread):
@@ -82,6 +84,7 @@ def receive_model(tcp_ip, tcp_port):
         # received = conn.recv(BUFFER_SIZE).decode()
         received = conn.recv(BUFFER_SIZE)
         filename, file_path = received.split(bytes(SEPARATOR,'UTF-8'))
+        print(filename, file_path)
         filename = filename.decode('UTF-8')
         file_path = file_path.decode('UTF-8')
         print('Got connection from ', (ip,port,file_path,filename))
@@ -129,6 +132,7 @@ def model_init():
     x = Dense(10,activation='softmax')(x)
     model = Model(model.input,x)
     return model
+    # return MobileNetV2((32, 32, 3), classes=10, weights=None)
 
 def aggregated(server_weight):
     avg_weight = np.array(server_weight[0])
