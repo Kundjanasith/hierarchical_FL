@@ -32,21 +32,49 @@ for e in range(1,num_communication_rounds):
     logging.info("[COMPLETE] RECEIVE AGGREGATED MODEL IN EP%d"%e)
 
     logging.info("[START] AGGREGATING AGGREGATED MODEL IN EP%d"%e)
+    # arr = []
+    # for p in glob.glob('aggregated_models/*_ep%d.h5'%(e)):
+    #     model = utils.model_init()
+    #     while not os.path.exists(p):
+    #         print('waiting',p)
+    #         model.load_weights(p)
+    #     # while not os.path.exists(p):
+    #     #     try:
+    #     #         model.load_weights(p)
+    #     #     except:
+    #     #         pass
+    #     arr.append(copy.deepcopy(model.get_weights()))
+    # arr_avg = utils.aggregated(arr)
+    # exchanged_model = utils.model_init()
+    # exchanged_model.set_weights(arr_avg)
+
     arr = []
+    while True:
+        print('aa')
+        try:
+            print('bb')
+            model = utils.model_init()
+            model.load_weights('exchanged_models/model_ep%d.h5'%(e-1))
+            break
+        except:
+            print('cc')
+            pass
+    arr.append('exchanged_models/model_ep%d.h5'%(e-1))
     for p in glob.glob('aggregated_models/*_ep%d.h5'%(e)):
-        model = utils.model_init()
-        while not os.path.exists(p):
-            print('waiting',p)
-            model.load_weights(p)
         # while not os.path.exists(p):
-        #     try:
-        #         model.load_weights(p)
-        #     except:
-        #         pass
-        arr.append(copy.deepcopy(model.get_weights()))
-    arr_avg = utils.aggregated(arr)
-    exchanged_model = utils.model_init()
-    exchanged_model.set_weights(arr_avg)
+        #     time.sleep(5)
+        while True:
+            print('a',p)
+            try:
+                print('b',p)
+                model = utils.model_init()
+                model.load_weights(p)
+                break
+            except:
+                print('c',p)
+                pass
+        arr.append(p)
+    exchanged_model = utils.aggregated(arr)
     exchanged_model.save_weights('exchanged_models/model_ep%d.h5'%(e))
     logging.info("[COMPLETE] AGGREGATING AGGREGATED MODEL IN EP%d"%e)
 

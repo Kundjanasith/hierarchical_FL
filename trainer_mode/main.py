@@ -25,7 +25,17 @@ for e in range(num_communication_rounds):
     model = utils.model_init()
     while not os.path.exists('exchanged_models/model_ep%d.h5'%(e)):
         time.sleep(5)
-    model.load_weights('exchanged_models/model_ep%d.h5'%(e))
+    # model.load_weights('exchanged_models/model_ep%d.h5'%(e))
+    while True:
+        print('aa')
+        try:
+            print('bb')
+            model = utils.model_init()
+            model.load_weights('exchanged_models/model_ep%d.h5'%(e))
+            break
+        except:
+            print('cc')
+            pass
     # while not os.path.exists('exchanged_models/model_ep%d.h5'%(e)):
     #     try:
     #         model.load_weights('exchanged_models/model_ep%d.h5'%(e))

@@ -5,6 +5,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.datasets import cifar10
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import SGD
+from tensorflow.keras.backend import clear_session
 import random
 import numpy as np
 import socket, os, time
@@ -42,6 +43,7 @@ def send_model(tcp_ip, tcp_port, file_path, to_path):
     print('XXXX',TCP_IP, TCP_PORT)
     s.connect((TCP_IP, TCP_PORT))
     s.send(bytes(f"{file_path.split('/')[1]}{SEPARATOR}{to_path}",'UTF-8'))
+    time.sleep(10)
     with open(file_path, 'rb') as f:
         while True:
             bytes_read = f.read(BUFFER_SIZE)
@@ -59,12 +61,12 @@ def send_model(tcp_ip, tcp_port, file_path, to_path):
 def broadcast_model(tcp_ip_list, tcp_port, file_path, to_path):
     for ip in tcp_ip_list:
         # os.system('cp %s %s'%(file_path,file_path+ip))
-        time.sleep(10)
+        # time.sleep(10)
         print('start transfer %s to %s'%(file_path,ip))
         res = send_model(ip, tcp_port, file_path, to_path)
         # print(res)
         # os.system('rm -rf %s'%(file_path+ip))
-        time.sleep(10)
+        # time.sleep(10)
         print('end transfer %s to %s'%(file_path,ip))
     return 'complete'
 
@@ -83,10 +85,15 @@ def receive_model(tcp_ip, tcp_port):
         (conn, (ip,port)) = tcpsock.accept()
         # received = conn.recv(BUFFER_SIZE).decode()
         received = conn.recv(BUFFER_SIZE)
-        filename, file_path = received.split(bytes(SEPARATOR,'UTF-8'))
-        print(filename, file_path)
-        filename = filename.decode('UTF-8')
-        file_path = file_path.decode('UTF-8')
+        print(received)
+        received = received.decode('UTF-8')
+        filename, file_path = received.split(SEPARATOR)
+
+
+        # filename, file_path = received.split(bytes(SEPARATOR,'UTF-8'))
+        # print(filename, file_path)
+        # filename = filename.decode('UTF-8')
+        # file_path = file_path.decode('UTF-8')
         print('Got connection from ', (ip,port,file_path,filename))
         newthread = ClientThread(tcp_ip,tcp_port,conn,file_path+'/'+filename,BUFFER_SIZE)
         newthread.start()
@@ -134,10 +141,53 @@ def model_init():
     return model
     # return MobileNetV2((32, 32, 3), classes=10, weights=None)
 
-def aggregated(server_weight):
-    avg_weight = np.array(server_weight[0])
-    if len(server_weight) > 1:
-        for i in range(1, len(server_weight)):
-            avg_weight += server_weight[i]
-    avg_weight = avg_weight / len(server_weight)
-    return avg_weight
+# def aggregated(server_weight):
+#     avg_weight = np.array(server_weight[0])
+#     if len(server_weight) > 1:
+#         for i in range(1, len(server_weight)):
+#             avg_weight += server_weight[i]
+#     avg_weight = avg_weight / len(server_weight)
+#     return avg_weight
+
+def getLayerIndexByName(model, layername):
+    for idx, layer in enumerate(model.layers):
+        if layer.name == layername:
+            return idx
+
+def aggregated(model_path):
+    global_model = model_init()
+    global_model.load_weights(model_path[0])
+    model_dict = {}
+    count = 0
+    for l in global_model.layers:
+        l_idx = getLayerIndexByName(global_model, l.name)
+        for w_idx in range(len(global_model.get_layer(index=l_idx).get_weights())):
+            w = global_model.get_layer(index=l_idx).get_weights()[w_idx]
+            model_dict[count] = []
+            model_dict[count].append(w)
+            count = count + 1
+    clear_session()
+    for p in model_path[1:]:
+        count = 0
+        client_model = model_init()
+        print(p)
+        client_model.load_weights(p)
+        for l in client_model.layers:
+            l_idx = getLayerIndexByName(client_model, l.name)
+            for w_idx in range(len(client_model.get_layer(index=l_idx).get_weights())):
+                w = client_model.get_layer(index=l_idx).get_weights()[w_idx]
+                model_dict[count].append(w)
+                count = count + 1
+    clear_session()
+    aggregated_model = model_init()
+    count = 0
+    for l in aggregated_model.layers:
+        l_idx = getLayerIndexByName(aggregated_model, l.name)
+        w_arr = []
+        for w_idx in range(len(aggregated_model.get_layer(index=l_idx).get_weights())):
+            w = aggregated_model.get_layer(index=l_idx).get_weights()[w_idx]
+            w_avg = np.nanmean(np.array(model_dict[count]),axis=0)
+            count = count + 1
+            w_arr.append(w_avg)
+        aggregated_model.get_layer(index=l_idx).set_weights(w_arr)
+    return aggregated_model

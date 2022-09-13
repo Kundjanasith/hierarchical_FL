@@ -25,13 +25,14 @@ for e in range(1,101):
     list_trained_models.sort()
     list_aggregated_models = glob.glob('aggregated_models/*_ep%d.h5'%e)
     list_aggregated_models.sort()
-    for p in list_trained_models:
-       model.load_weights(p)
-       model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
-       _, acc = model.evaluate(X_test, Y_test)
-       file_out.write('%f,'%acc)
+    print(list_aggregated_models)
+    # for p in list_trained_models:
+    #    model.load_weights(p)
+    #    model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
+    #    _, acc = model.evaluate(X_test, Y_test)
+    #    file_out.write('%f,'%acc)
     model.load_weights(list_aggregated_models[0])
     model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
-    _, acc = model.evaluate(X_test, Y_test)
+    _, acc = model.evaluate(X_test, Y_test, verbose=2)
     file_out.write('%f\n'%acc)
     
