@@ -49,10 +49,14 @@ def send_model(tcp_ip, tcp_port, file_path, to_path):
             bytes_read = f.read(BUFFER_SIZE)
             if not bytes_read:
                 break
-            try:
-                s.sendall(bytes_read)
-            except Exception as e:
-                print(e)
+            while True:
+                try:
+                    s.sendall(bytes_read)
+                    print('SEND COMPLETE')
+                    break
+                except Exception as e:
+                    print(e)
+                    pass
         f.close()
     time.sleep(1)
     s.close()
@@ -61,12 +65,12 @@ def send_model(tcp_ip, tcp_port, file_path, to_path):
 def broadcast_model(tcp_ip_list, tcp_port, file_path, to_path):
     for ip in tcp_ip_list:
         # os.system('cp %s %s'%(file_path,file_path+ip))
-        # time.sleep(10)
+        time.sleep(10)
         print('start transfer %s to %s'%(file_path,ip))
         res = send_model(ip, tcp_port, file_path, to_path)
         # print(res)
         # os.system('rm -rf %s'%(file_path+ip))
-        # time.sleep(10)
+        time.sleep(10)
         print('end transfer %s to %s'%(file_path,ip))
     return 'complete'
 
