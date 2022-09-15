@@ -37,3 +37,9 @@ sudo docker run -it -p 19190:19190 -p 19191:19191 -p 19192:19192 kundjanasith/pi
 ![overview](figures/setup.png)
 
 
+## Result
+
+## Execution time
+![time_exchanger](figures/time/exchanger.png)
+![time_aggregator](figures/time/aggregator.png)
+![time_trainer](figures/time/trainer.png)
