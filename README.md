@@ -39,7 +39,12 @@ sudo docker run -it -p 19190:19190 -p 19191:19191 -p 19192:19192 kundjanasith/pi
 
 ## Result
 
-## Execution time
+### Execution time
 ![time_exchanger](figures/time/exchanger.png)
 ![time_aggregator](figures/time/aggregator.png)
 ![time_trainer](figures/time/trainer.png)
+
+### Model accuracy
+![accuracy_exchanger](figures/accuracy/exchanger.png)
+![accuracy_aggregator](figures/accuracy/aggregator.png)
+![accuracy_trainer](figures/accuracy/trainer.png)
