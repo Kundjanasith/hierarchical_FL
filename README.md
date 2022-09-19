@@ -51,3 +51,7 @@ sudo docker run -it -p 19190:19190 -p 19191:19191 -p 19192:19192 kundjanasith/pi
 
 ### Timeline
 ![timeline](figures/time/timeline_ep45.png)
+
+## Comparison
+![compare](figures/compare.png)
+
