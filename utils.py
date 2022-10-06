@@ -39,28 +39,52 @@ def send_model(tcp_ip, tcp_port, file_path, to_path):
     TCP_PORT = tcp_port
     BUFFER_SIZE = 1024
     SEPARATOR = "<SEPARATOR>"
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    print('XXXX',TCP_IP, TCP_PORT)
-    s.connect((TCP_IP, TCP_PORT))
-    s.send(bytes(f"{file_path.split('/')[1]}{SEPARATOR}{to_path}",'UTF-8'))
-    time.sleep(10)
-    with open(file_path, 'rb') as f:
-        while True:
-            bytes_read = f.read(BUFFER_SIZE)
-            if not bytes_read:
-                break
+    # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # s.connect((TCP_IP, TCP_PORT))
+    # s.send(bytes(f"{file_path.split('/')[1]}{SEPARATOR}{to_path}",'UTF-8'))
+    # time.sleep(10)
+    # with open(file_path, 'rb') as f:
+    #     while True:
+    #         bytes_read = f.read(BUFFER_SIZE)
+    #         if not bytes_read:
+    #             break
+    #         while True:
+    #             try:
+    #                 s.sendall(bytes_read)
+    #                 print('SEND COMPLETE')
+    #                 break
+    #             except Exception as e:
+    #                 print(e)
+    #                 pass
+    #     f.close()
+    # time.sleep(1)
+    # s.close()
+    # return 'complete'
+    
+    flag = True
+
+    while True:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((TCP_IP, TCP_PORT))
+        s.send(bytes(f"{file_path.split('/')[1]}{SEPARATOR}{to_path}",'UTF-8'))
+        with open(file_path, 'rb') as f:
             while True:
+                bytes_read = f.read(BUFFER_SIZE)
+                if not bytes_read:
+                    # break
+                    f.close()
+                    s.close()
+                    return 'complete'
                 try:
                     s.sendall(bytes_read)
-                    print('SEND COMPLETE')
-                    break
+                    f.close()
+                    s.close()
+                    return 'complete'
                 except Exception as e:
                     print(e)
-                    pass
-        f.close()
-    time.sleep(1)
-    s.close()
-    return 'complete'
+                    flag = False
+                    break
+    return 'failed'
 
 def broadcast_model(tcp_ip_list, tcp_port, file_path, to_path):
     for ip in tcp_ip_list:
