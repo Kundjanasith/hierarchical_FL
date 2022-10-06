@@ -55,6 +55,7 @@ def send_model(tcp_ip, tcp_port, file_path, to_path):
                     break
                 except Exception as e:
                     print(e)
+                    time.sleep(5)
                     pass
         f.close()
     time.sleep(1)
