@@ -77,9 +77,6 @@ def send_model(tcp_ip, tcp_port, file_path, to_path):
                     return 'complete'
                 try:
                     s.sendall(bytes_read)
-                    f.close()
-                    s.close()
-                    return 'complete'
                 except Exception as e:
                     print(e)
                     flag = False
