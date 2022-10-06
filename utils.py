@@ -34,7 +34,7 @@ class ClientThread(Thread):
             f.close()
         time.sleep(1)
 
-def send_model(tcp_ip, tcp_port, file_path, to_path):
+def send_model_pipe(tcp_ip, tcp_port, file_path, to_path):
     TCP_IP = tcp_ip
     TCP_PORT = tcp_port
     BUFFER_SIZE = 1024
@@ -56,11 +56,19 @@ def send_model(tcp_ip, tcp_port, file_path, to_path):
                 except Exception as e:
                     print(e)
                     time.sleep(5)
+                    return 'failed'
                     pass
         f.close()
     time.sleep(1)
     s.close()
     return 'complete'
+
+def send_model(tcp_ip, tcp_port, file_path, to_path):
+    while True:
+        res = send_model_pipe(tcp_ip, tcp_port, file_path, to_path)
+        if res == 'complete':
+            break
+    return 'done'
 
 def broadcast_model(tcp_ip_list, tcp_port, file_path, to_path):
     for ip in tcp_ip_list:
