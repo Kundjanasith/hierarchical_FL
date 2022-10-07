@@ -3,7 +3,7 @@ sys.path.insert(1, '..')
 import utils
 
 config = configparser.ConfigParser()
-config.read('../config_3.ini')
+config.read('../config_4.ini')
 
 group_id = sys.argv[1]
 
