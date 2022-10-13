@@ -3,7 +3,7 @@ sys.path.insert(1, '..')
 import utils
 
 config = configparser.ConfigParser()
-config.read('../config_4.ini')
+config.read('../config_5.ini')
 
 aggregator_ip = []
 for group in ast.literal_eval(config['TRAINING']['GROUPS']):
